@@ -17,11 +17,11 @@ My classwork from [BIMM143 S25](https://bioboot.github.io/bimm143_S25/) at UC Sa
 
 - 11 [Structural Bioinformatics Pt.2 Alphafold]()
 
-- 12 [Genome Informatics]()
+- 12 [Genome Informaticsand High Throughput Sequencing]()
 
-- 13 [RNASeq Analysis]()
+- 13 [Transcriptomics and the Analysis of RNA-Seq Data]()
 
-- 14 [RNASeq Mini-Project]()
+- 14 [RNASeq Analysis Mini-Project]()
 
 - 17 [Analyzing Sequencing Data in the Cloud]()
 
