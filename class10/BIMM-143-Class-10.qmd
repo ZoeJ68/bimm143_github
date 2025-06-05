@@ -112,8 +112,8 @@ head(pdbseq(pdb))
 We can make quick 3D viz with the `view.pdb()` function:
 
 ```{r}
-library(bio3dview)
-library(NGLVieweR)
+#library(bio3dview)
+#library(NGLVieweR)
 
 #view.pdb(pdb, backgroundColor = "lightblue", colorScheme = "sse")
 ```
@@ -210,9 +210,9 @@ pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
 
 Side-note:
 ```{r}
-library(bio3dview)
+#library(bio3dview)
 
-view.pdbs(pdbs)
+#view.pdbs(pdbs)
 ```
 
 This is better but still difficult to see what is similar and different in all these structures or even learn much about how this family works. 
@@ -229,7 +229,7 @@ plot(pc, pc.axes =1:2)
 ```
 
 ```{r}
-view.pca(pc)
+#view.pca(pc)
 ```
 
 Write a PDB "trajectory" for mol-star
