@@ -11,7 +11,7 @@ My classwork from [BIMM143 S25](https://bioboot.github.io/bimm143_S25/) at UC Sa
 
 - 08 [Breast Cancer Mini-Project](https://github.com/ZoeJ68/bimm143_github/blob/main/class08/BIMM%20143%20Lab%208%20Mini%20Project.md)
 
-- 09 [Halloween Cady Mini-Project]9()
+- 09 [Halloween Cady Mini-Project]()
 
 - 10 [Structural Bioinformatics Pt. 1]()
 
