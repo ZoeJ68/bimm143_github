@@ -1,0 +1,200 @@
+---
+title: "Class 11: AlphaFold"
+author: "Zoe Matsunaga (PID: A16853288)"
+format: pdf
+toc: true
+---
+
+Here we read the results from AlphaFold and try to interpret all the models and quality score metrics:
+
+```{r}
+library(bio3d)
+
+pth <- "dimer_23119"
+pdb.files <-list.files(path = pth, full.names=TRUE, pattern=".pdb")
+```
+
+Align and superpose all these models
+
+```{r}
+file.exists(pdb.files)
+```
+
+```{r}
+pdbs <- pdbaln(pdb.files, fit=TRUE, exefile="msa")
+```
+
+```{r}
+library(bio3d)
+pdbs
+pdbs$b
+```
+
+We can make a plot to analyze the different dimers
+
+```{r}
+plot(pdbs$b[1,], typ="l", ylim=c(0,100), ylab="pLDDT score")
+lines(pdbs$b[2,], typ="l", col="red")
+lines(pdbs$b[3,], typ="l", col="green")
+lines(pdbs$b[4,], typ="l", col="blue")
+lines(pdbs$b[5,], typ="l", col="orange")
+```
+
+## Custom Analysis of Resulting Models
+
+Let's find just the pdb files in our AlphaFold file:
+
+```{r}
+
+pdb_files <- list.files(path=pth,
+                        pattern="*.pdb",
+                        full.names = TRUE)
+basename(pdb_files)
+```
+
+We can view their sequence using bio3d:
+
+```{r}
+library(bio3d)
+pdbs
+```
+
+We can measure the distance between the dimers using a RMSD matrix and the `rmsd()` function:
+
+```{r}
+rd <- rmsd(pdbs, fit=T)
+range(rd)
+```
+
+We can then use the RMSD data to create a heatmap showing the similarities between the models.
+
+```{r}
+library(pheatmap)
+
+colnames(rd) <- paste0("m",1:5)
+rownames(rd) <- paste0("m",1:5)
+pheatmap(rd)
+```
+
+Let's create a pLDDT plot too:
+
+```{r}
+pdb <- read.pdb("1hsg")
+```
+
+```{r}
+plotb3(pdbs$b[1,], typ="l", lwd=2, sse=pdb)
+points(pdbs$b[2,], typ="l", col="red")
+points(pdbs$b[3,], typ="l", col="blue")
+points(pdbs$b[4,], typ="l", col="darkgreen")
+points(pdbs$b[5,], typ="l", col="orange")
+abline(v=100, col="gray")
+```
+
+We can use the `core.find()` function to find the core atom positions of the protein:
+
+```{r}
+core <- core.find(pdbs)
+core.inds <- print(core, vol=0.5)
+```
+
+we can then measure the conformational varience using the RMSF and plotting it to examine which chain is more similar or more variable: 
+
+```{r}
+xyz <- pdbfit(pdbs, core.inds, outpath="corefit_structures")
+
+rf <- rmsf(xyz)
+
+plotb3(rf, sse=pdb)
+abline(v=100, col="gray", ylab="RMSF")
+```
+
+As seen in the graph, the second chain is more variable than the first, and this can be confirmed when looking at the 3D model on Mol-star.
+
+### Predicted Alignment Error for Domains
+
+Information on predicted alignment error (PAE) for domains can be found in the AlphaFold file. They are in the format json, thus jsonlite will be needed to read the files.
+
+```{r}
+library(jsonlite)
+
+pae_files <- list.files(path=pth,
+                        pattern=".*model.*\\.json",
+                        full.names = TRUE)
+
+pae1 <- read_json(pae_files[1],simplifyVector = TRUE)
+pae5 <- read_json(pae_files[5],simplifyVector = TRUE)
+attributes(pae1)
+head(pae1$plddt) 
+```
+
+The lower the max PAE score the better...
+
+```{r}
+pae1$max_pae
+pae5$max_pae
+```
+
+We can plot residue positons for PAE1 and PAE5 using bio3D package plot.dmat:
+
+```{r}
+plot.dmat(pae1$pae, 
+          xlab="Residue Position (i)",
+          ylab="Residue Position (j)")
+```
+
+```{r}
+plot.dmat(pae5$pae, 
+          xlab="Residue Position (i)",
+          ylab="Residue Position (j)",
+          grid.col = "black",
+          zlim=c(0,30))
+
+```
+
+We'll plot PAE1 again, but this time on the same data range as PAE5:
+
+```{r}
+plot.dmat(pae1$pae, 
+          xlab="Residue Position (i)",
+          ylab="Residue Position (j)",
+          grid.col = "black",
+          zlim=c(0,30))
+```
+
+### Residue Conservation from Alignment File
+
+Let's open an alignment file from our AlphaFold data:
+
+```{r}
+aln_file <- list.files(path=pth, 
+                       pattern= ".a3m$",
+                       full.names=TRUE)
+aln <- read.fasta(aln_file[1], to.upper = TRUE)
+```
+
+Let's find out how many sequences are in this alignment, and score the rsidue conservation using `conserv()`:
+
+```{r}
+dim(aln$ali)
+sim <- conserv(aln)
+
+plotb3(sim[1:99], sse=trim.pdb(pdb, chain="A"),
+       ylab="Conservation Score")
+```
+
+We can see what active site residues are conserved: 
+
+```{r}
+con <- consensus(aln, cutoff = 0.9)
+con$seq
+```
+
+We can then view this conservation in Mol-star by making our data into a pdb file:
+
+```{r}
+m1.pdb <- read.pdb(pdb_files[1])
+occ <- vec2resno(c(sim[1:99], sim[1:99]), m1.pdb$atom$resno)
+write.pdb(m1.pdb, o=occ, file="m1_conserv.pdb")
+```
+

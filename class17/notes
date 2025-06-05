@@ -1,0 +1,19 @@
+Cmd to login:
+
+ssh -i ~/Downloads/bimm143_zoematsunaga.pem ubuntu@ec2-35-95-61-210.us-west-2.compute.amazonaws.com
+
+
+kallisto quant -i hg19.ensembl -o SRR2156848_quant SRR2156848_1.fastq SRR2156848_2.fastq
+ls
+ls SRR2156848_quant
+kallisto quant -i ___ -o SRR2156849_quant SRR2156849_1.fastq SRR2156849_2.fastq
+ls
+kallisto quant -i hg19.ensembl -o SRR2156850_quant ___.fastq ___.fastq
+ls
+kallisto quant -i hg19.ensembl -o SRR2156851_quant SRR2156851_1.fastq SRR2156851_2.fastq
+ls
+nano runme.sh
+./runme.sh
+
+scp -r -i ~/Downloads/bimm143_zoematsunaga.pem ubuntu@ec2-35-95-61-210.us-west-2.compute.amazonaws.com:~/class17/*_quant .
+

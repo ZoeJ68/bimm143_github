@@ -1,0 +1,69 @@
+nano is a very basic text editor that is available everywhere. 
+
+Some important unix cmds: 
+
+pwd: where are we in the file system
+
+cd: change dir
+
+ls: list the contents of the current dir
+
+mkdir: make a new directory
+
+rm: remove files and folders ** WARNING **
+
+nano: text editors 
+
+head: view top of file
+
+tail: view bottom of file
+
+less: page through a file
+
+man: help page
+
+ssh: -i [keyfile] [user]@[compute]
+
+grep: finds everything
+
+grep -c: count
+
+^C: kill
+
+^Z: sleep
+
+^Q: quit
+
+^X:exit
+
+ps: process
+
+Useful shortcuts:
+
+The TAB key for autocomplete
+
+the ~ for home area
+
+the ../ for dropping to the main/parent directory
+
+We will use a slight variant of this command in your favorite terminal application to access your EC2 instance via ssh - secure shell connection. This will be covered in detail in the next section (different lab page) but briefly here for completeness:
+
+In your Terminal change directory to where you downloaded the private key file
+
+cd ~/Downloads
+Change the permission of the key file (make sure to use the name of YOUR key file here and not mine - it is unlikely that your name is also bjgrant ;-)
+
+- Open an SSH client
+- Locate your private key file. 
+- Run this command, if necessary, to ensure your key is not publicly viewable.
+
+chmod 400 "~/Downloads/bimm143_zoematsunaga.pem"
+
+Now it is time to ssh into your EC2 instance with this key file - here use the command you copied from the web site previously (red box above), e.g.
+
+# Use YOUR copied ssh command from above, e.g.
+ssh -i ~/Downloads/bimm143_zoematsunaga.pem ubuntu@ec2-34-218-208-199.us-west-2.compute.amazonaws.com
+
+To Copy: 
+scp -i ~/Downloads/bimm143_zoematsunaga.pem ubuntu@ec2-34-218-208-199.us-west-2.compute.amazonaws.com:/home/ubuntu/work/work/mm-second.x.zebrafish.tsv results.tsv
+
